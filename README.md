@@ -1,6 +1,68 @@
 # Workflow
 
-A development workflow built on top of Claude Code's agent system. Each feature goes through a structured pipeline — from requirements review to pull request — with every decision documented in a per-feature folder that serves as the audit trail for the entire development cycle.
+A development workflow built on top of Claude Code's agent system.
+
+---
+
+## Installation
+
+The workflow is installed per-project by copying the `.claude/` folder into the root of your repository.
+
+### 1. Clone this repository
+
+```bash
+git clone <repo-url> workflow
+```
+
+### 2. Copy `.claude/` into your project
+
+```bash
+cp -r workflow/.claude /path/to/your-project/
+```
+
+On Windows (PowerShell):
+```powershell
+Copy-Item -Recurse workflow\.claude your-project\
+```
+
+### 3. Verify the structure
+
+After copying, your project should have:
+
+```
+your-project/
+  .claude/
+    agents/
+      bench-test-architect.md
+      code-beautifier-reviewer.md
+      code-writer.md
+      prd-story-reviewer.md
+      project-initializer.md
+      tdd-test-architect.md
+    commands/
+      dev-workflow-boilerplate.md
+      dev-workflow-code.md
+      dev-workflow-init.md
+      dev-workflow-pr.md
+      dev-workflow-review.md
+      dev-workflow-status.md
+      dev-workflow-tests.md
+    rules/
+      WORKFLOW_CONVENTIONS.md
+```
+
+### 4. Open your project in Claude Code
+
+```bash
+cd your-project
+claude
+```
+
+The `/dev-workflow-*` commands will be available immediately.
+
+> **Note:** `workflow-output/` is created automatically the first time you run a command. Add it to your `.gitignore` if you don't want to commit the generated artifacts.
+
+--- Each feature goes through a structured pipeline — from requirements review to pull request — with every decision documented in a per-feature folder that serves as the audit trail for the entire development cycle.
 
 ---
 
