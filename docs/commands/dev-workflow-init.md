@@ -84,6 +84,97 @@ If a card number is provided, `prd-story-reviewer` fetches it from Azure DevOps 
 
 ---
 
+## What to pass as input
+
+You can pass a **PRD**, a **User Story**, a **card number**, or a **free-form feature description**. All formats are accepted — the agent normalizes them into the same validated structure.
+
+---
+
+### PRD (Product Requirements Document)
+
+A PRD describes a feature from the product perspective: what it is, why it exists, who it affects, and what "done" looks like. It can be formal or informal.
+
+**Minimal example:**
+```
+Feature: Password reset via email
+
+Users who forget their password can request a reset link sent to their
+registered email address. The link expires after 30 minutes. After
+resetting, the old password is immediately invalidated.
+
+Out of scope: social login, SMS reset.
+```
+
+**More complete example:**
+```
+Feature: Rate-limited login
+
+Objective: Prevent brute-force attacks on the login endpoint.
+
+Users affected: All users authenticating via email + password.
+
+Acceptance criteria:
+- After 5 consecutive failed login attempts, the account is locked for 15 minutes.
+- The lockout is per account, not per IP.
+- The user receives an email notification when lockout is triggered.
+- A successful login resets the failed-attempt counter.
+
+Out of scope: OAuth logins, admin override of lockouts.
+
+Dependencies: Email delivery service must be operational.
+```
+
+---
+
+### User Story
+
+A User Story expresses a feature from the user's point of view, typically in the format *"As a [role], I want [goal] so that [reason]"*. Acceptance criteria are usually listed as conditions.
+
+**Minimal example:**
+```
+As a registered user, I want to reset my password via email so that
+I can recover access to my account if I forget it.
+```
+
+**With acceptance criteria:**
+```
+US-892 — Shopping cart persistence
+
+As a shopper, I want my cart to be saved between sessions so that
+I don't lose my selections when I close the browser.
+
+Acceptance criteria:
+- Cart items persist for 30 days for logged-in users.
+- Guest carts are saved in localStorage and merged on login.
+- Removing an item from the cart is reflected immediately and persists.
+- Cart is cleared after a successful checkout.
+
+Notes: Backend uses Redis with a 30-day TTL per user ID.
+```
+
+---
+
+### Card number (Azure DevOps)
+
+If your team tracks requirements in Azure DevOps, pass the card number directly and the agent fetches the content automatically:
+
+```
+/dev-workflow-init US-892
+/dev-workflow-init #4521
+```
+
+---
+
+### Free-form description
+
+If you don't have a formal document yet, a plain description works too — the agent will ask clarifying questions to fill any gaps:
+
+```
+/dev-workflow-init Quero um sistema de login com email e senha, bloqueio após 5 tentativas erradas e notificação por email
+```
+
+---
+
 ## Outputs
 
 ```mermaid
