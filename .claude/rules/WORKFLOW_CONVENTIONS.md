@@ -73,6 +73,29 @@ Before invoking any agent, each command checks that its required input artifacts
 
 ---
 
+## Session Resume Protocol
+
+Every command checks for an interrupted session before invoking any agent.
+
+### Pre-Invocation Check
+
+After resolving `OUTPUT_DIR`, check if `{OUTPUT_DIR}/session-resume.md` exists:
+
+- If it **exists**: read the file and show the user a summary:
+  > "A previous session was interrupted at ~95% context. Agent: `<agent>`, interrupted at: `<interrupted step>`."
+  > "Resume from where it left off, or start fresh? (resume/fresh)"
+  - **Resume**: pass the full file contents to the agent as a `RESUME_CONTEXT` block in the task prompt
+  - **Start fresh**: delete `{OUTPUT_DIR}/session-resume.md` and proceed normally
+- If it **does not exist**: proceed normally
+
+### Resume File Location
+
+```
+{OUTPUT_DIR}/session-resume.md
+```
+
+---
+
 ## Customization
 
 | Convention | Where to change |

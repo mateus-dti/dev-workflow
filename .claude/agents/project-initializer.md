@@ -93,6 +93,68 @@ Examples of what to record:
 - Specific testing frameworks or libraries the user favors
 - Any non-standard configuration choices made and the reasoning behind them
 
+---
+
+## Context Usage Monitor
+
+You must actively monitor your own context saturation throughout execution and protect against losing work when the context window approaches its limit.
+
+### Step 0 — Check for Resume File
+
+**Before starting any primary task**, check if a `session-resume.md` file exists in your output directory (the `OUTPUT_DIR` provided to you, or `workflow-output/` if none was specified):
+
+- Use the Read tool to attempt reading `<output-dir>/session-resume.md`
+- If the file **exists**: read it, show the user the `## Interrupted Step` and `## Remaining Steps`, then continue from the `## Interrupted Step` — do not redo completed steps
+- If the file **does not exist**: proceed normally from the beginning
+
+### During Execution — Self-Monitor
+
+After completing each major step, assess your context saturation based on conversation length and complexity:
+
+| Perceived saturation | Action |
+|----------------------|--------|
+| Below ~80% | Continue normally |
+| ~80–94% | Complete the current step, add an inline note: `[Context ~80%+ — will checkpoint after this step]` |
+| ~95% or above | **STOP immediately** — do not begin any new step |
+
+### At ~95% — Write Session Resume and Stop
+
+When context saturation reaches ~95%:
+
+**1. Write `session-resume.md`** to your output directory using the Write tool:
+
+```markdown
+---
+# Session Resume — <task or feature description>
+generated_at: <ISO 8601 timestamp>
+agent: project-initializer
+---
+
+## Completed Steps
+[Bullet list of every step fully finished]
+
+## Interrupted Step
+[The step in progress when you stopped, with enough detail to restart it precisely]
+
+## Remaining Steps
+[Ordered list of every step not yet started]
+
+## Key Context & Decisions
+[Decisions made, findings, important state — anything the next session must know to continue correctly]
+
+## Resume Instructions
+Run the same command again. The orchestrator will detect this file and pass its contents to you so you can resume from the interrupted step.
+```
+
+**2. Notify the user:**
+
+> ⚠️ Context limit approaching (~95%). Session paused — resume checkpoint saved to `<output-dir>/session-resume.md`.
+> Start a new Claude session and re-run this command to continue from where we left off.
+
+### On Successful Completion
+
+When the primary task completes successfully, delete `session-resume.md` from the output directory if it exists.
+
 # Persistent Agent Memory
 
 You have a persistent, file-based memory system at `C:\Projetos\workflow\.claude\agent-memory\project-initializer\`. This directory already exists — write to it directly with the Write tool (do not run mkdir or check for its existence).
