@@ -36,6 +36,7 @@ your-project/
       bench-test-architect.md
       code-beautifier-reviewer.md
       code-writer.md
+      dev-workflow-prototype.md
       prd-story-reviewer.md
       project-initializer.md
       tdd-test-architect.md
@@ -44,6 +45,7 @@ your-project/
       dev-workflow-code.md
       dev-workflow-init.md
       dev-workflow-pr.md
+      dev-workflow-prototype.md
       dev-workflow-review.md
       dev-workflow-status.md
       dev-workflow-tests.md
@@ -72,6 +74,7 @@ The `/dev-workflow-*` commands will be available immediately.
 flowchart TD
     INIT["/dev-workflow-init\n─────────────────\nprd-story-reviewer\nbench-test-architect"]
     BOIL["/dev-workflow-boilerplate\n─────────────────\nproject-initializer"]
+    PROTO["/dev-workflow-prototype\n─────────────────\ndev-workflow-prototype\n— optional —"]
     TEST["/dev-workflow-tests\n─────────────────\ntdd-test-architect"]
     CODE["/dev-workflow-code\n─────────────────\ncode-writer"]
     REV["/dev-workflow-review\n─────────────────\ncode-beautifier-reviewer"]
@@ -81,6 +84,8 @@ flowchart TD
     INIT -->|prd-review.md\nbench-test.md| BOIL
     BOIL -->|boilerplate-report.md\n— optional —| TEST
     INIT -.->|skip boilerplate\nfor existing projects| TEST
+    INIT -.->|frontend features| PROTO
+    PROTO -.->|prototype-report.md\n— optional —| TEST
     TEST -->|tests-report.md| CODE
     CODE -->|code-report.md| REV
     REV -->|review-report.md\nINDEX.md| PR
@@ -111,14 +116,16 @@ graph TD
     F1 --> A2["prd-review.md"]
     F1 --> A3["bench-test.md"]
     F1 --> A4["boilerplate-report.md ¹"]
-    F1 --> A5["tests-report.md"]
-    F1 --> A6["code-report.md"]
-    F1 --> A7["review-report.md"]
-    F1 --> A8["pr-description.md ²"]
+    F1 --> A5["prototype-report.md ²"]
+    F1 --> A6["tests-report.md"]
+    F1 --> A7["code-report.md"]
+    F1 --> A8["review-report.md"]
+    F1 --> A9["pr-description.md ³"]
 ```
 
 > ¹ Only present if `/dev-workflow-boilerplate` was run (greenfield projects).
-> ² Only present if `/dev-workflow-pr` was run.
+> ² Only present if `/dev-workflow-prototype` was run (frontend/visual features).
+> ³ Only present if `/dev-workflow-pr` was run.
 
 ---
 
@@ -137,6 +144,10 @@ flowchart LR
         SCAFF["project-initializer\n───────────────\nScaffolds TDD-ready\nprojects from scratch"]
     end
 
+    subgraph "Design"
+        PROTO["dev-workflow-prototype\n───────────────\nGenerates visual UI\nprototypes via Stitch MCP"]
+    end
+
     subgraph "Implementation"
         TDD["tdd-test-architect\n───────────────\nGenerates failing unit\nand integration tests"]
         WRITE["code-writer\n───────────────\nWrites implementation\ncode to pass tests"]
@@ -147,7 +158,9 @@ flowchart LR
     end
 
     PRD --> BENCH
+    BENCH -.-> PROTO
     BENCH --> TDD
+    PROTO -.-> TDD
     SCAFF -.-> TDD
     TDD --> WRITE
     WRITE --> REVIEW
@@ -161,6 +174,7 @@ flowchart LR
 |---------|-------------|------|
 | `/dev-workflow-init` | Review requirements and generate bench tests | [→](docs/commands/dev-workflow-init.md) |
 | `/dev-workflow-boilerplate` | Scaffold a TDD-ready project | [→](docs/commands/dev-workflow-boilerplate.md) |
+| `/dev-workflow-prototype` | Generate visual UI prototypes (optional, frontend features) | [→](docs/commands/dev-workflow-prototype.md) |
 | `/dev-workflow-tests` | Generate failing TDD test files | [→](docs/commands/dev-workflow-tests.md) |
 | `/dev-workflow-code` | Write implementation to pass tests | [→](docs/commands/dev-workflow-code.md) |
 | `/dev-workflow-review` | Review and polish the implementation | [→](docs/commands/dev-workflow-review.md) |
